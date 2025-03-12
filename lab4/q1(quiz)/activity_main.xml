@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="380dp"
+        android:layout_height="60dp"
+        android:layout_marginBottom="16dp"
+        android:text="Quizzard:Your Quiz Buddy"
+        android:textAlignment="center"
+        android:textSize="20sp"
+        android:layout_marginTop="200dp"/>
+
+    <TextView
+        android:id="@+id/question1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="1. Capital of India?"
+        android:textSize="18sp" />
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp">
+
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mumbai" />
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Chennai" />
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Delhi" />
+
+    </RadioGroup>
+
+
+    <TextView
+        android:id="@+id/question2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="What is 2 + 2?"
+        android:textSize="18sp" />
+
+    <RadioGroup
+        android:id="@+id/radioGroup2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="28dp">
+
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="3" />
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="4" />
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="5" />
+
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="160dp"
+        android:layout_height="81dp"
+        android:text="Submit Quiz" />
+
+
+</LinearLayout>

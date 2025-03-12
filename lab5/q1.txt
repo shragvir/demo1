@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Media Player"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_centerHorizontal="true"/>
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/title"
+        android:src="@drawable/abc"/>
+
+    <SeekBar
+        android:id="@+id/seekBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imageView"
+        android:layout_marginTop="16dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/seekBar"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/btnRewind"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="<<"/>
+
+        <Button
+            android:id="@+id/btnPlay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Play"/>
+
+        <Button
+            android:id="@+id/btnPause"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pause"/>
+
+        <Button
+            android:id="@+id/btnForward"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=">>"/>
+    </LinearLayout>
+
+</RelativeLayout>
+package com.example.mediaplayer;
+
+import android.media.MediaPlayer;
+import android.os.Bundle;
+import android.os.Handler;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.SeekBar;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.concurrent.TimeUnit;
+
+public class MainActivity extends AppCompatActivity {
+
+    private Button btnPlay, btnPause, btnForward, btnRewind;
+    private ImageView imageView;
+    private SeekBar seekBar;
+    private MediaPlayer mediaPlayer;
+    private Handler handler = new Handler();
+    private double startTime = 0;
+    private double finalTime = 0;
+    private int forwardTime = 5000;
+    private int backwardTime = 5000;
+    private TextView txtCurrentTime, txtTotalTime;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        btnPlay = findViewById(R.id.btnPlay);
+        btnPause = findViewById(R.id.btnPause);
+        btnForward = findViewById(R.id.btnForward);
+        btnRewind = findViewById(R.id.btnRewind);
+        seekBar = findViewById(R.id.seekBar);
+        imageView = findViewById(R.id.imageView);
+        txtCurrentTime = findViewById(R.id.title);
+        txtTotalTime = new TextView(this);
+
+        mediaPlayer = MediaPlayer.create(this, R.raw.song);
+        seekBar.setClickable(false);
+        btnPause.setEnabled(false);
+
+        btnPlay.setOnClickListener(v -> playMusic());
+        btnPause.setOnClickListener(v -> pauseMusic());
+        btnForward.setOnClickListener(v -> forwardMusic());
+        btnRewind.setOnClickListener(v -> rewindMusic());
+    }
+
+    private void playMusic() {
+        Toast.makeText(getApplicationContext(), "Playing music", Toast.LENGTH_SHORT).show();
+        mediaPlayer.start();
+        finalTime = mediaPlayer.getDuration();
+        startTime = mediaPlayer.getCurrentPosition();
+
+        seekBar.setMax((int) finalTime);
+        txtTotalTime.setText(String.format("%d min, %d sec",
+                TimeUnit.MILLISECONDS.toMinutes((long) finalTime),
+                TimeUnit.MILLISECONDS.toSeconds((long) finalTime) -
+                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes((long) finalTime))
+        ));
+
+        seekBar.setProgress((int) startTime);
+        handler.postDelayed(updateSeekBar, 100);
+        btnPause.setEnabled(true);
+        btnPlay.setEnabled(false);
+    }
+
+    private void pauseMusic() {
+        Toast.makeText(getApplicationContext(), "Pausing music", Toast.LENGTH_SHORT).show();
+        mediaPlayer.pause();
+        btnPause.setEnabled(false);
+        btnPlay.setEnabled(true);
+    }
+
+    private void forwardMusic() {
+        int temp = (int) startTime;
+        if ((temp + forwardTime) <= finalTime) {
+            startTime = startTime + forwardTime;
+            mediaPlayer.seekTo((int) startTime);
+            Toast.makeText(getApplicationContext(), "Jumped forward 5 seconds", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getApplicationContext(), "Cannot jump forward", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void rewindMusic() {
+        int temp = (int) startTime;
+        if ((temp - backwardTime) > 0) {
+            startTime = startTime - backwardTime;
+            mediaPlayer.seekTo((int) startTime);
+            Toast.makeText(getApplicationContext(), "Jumped backward 5 seconds", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getApplicationContext(), "Cannot jump backward", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private Runnable updateSeekBar = new Runnable() {
+        public void run() {
+            startTime = mediaPlayer.getCurrentPosition();
+            txtCurrentTime.setText(String.format("%d min, %d sec",
+                    TimeUnit.MILLISECONDS.toMinutes((long) startTime),
+                    TimeUnit.MILLISECONDS.toSeconds((long) startTime) -
+                            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes((long) startTime))
+            ));
+            seekBar.setProgress((int) startTime);
+            handler.postDelayed(this, 100);
+        }
+    };
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mediaPlayer.release();
+    }
+}
