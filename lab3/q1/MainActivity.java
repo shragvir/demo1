@@ -23,6 +23,8 @@ public class MainActivity extends AppCompatActivity {
 
         for(int i=0; i<20; i++){
             item[i] = "Item "+ (i);
+            int j=0;
+            j++;
         }
 
         //gv.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, item));
